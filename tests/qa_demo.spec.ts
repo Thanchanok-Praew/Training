@@ -1,14 +1,22 @@
-import {test, expect, type Locator} from '@playwright/test';
-import {locators} from '../pages/locators';
+import {test} from '@playwright/test';
+import {HomePage} from '../pages/home-page';
+import {LoginPage} from '../pages/login-page';
 
-// ประกาศตัวแปรไว้ก่อน แล้วค่อย assign ใน beforeEach (ตอนนั้นถึงจะมี page)
-let heading: Locator;
+let homePage: HomePage;
+let loginPage: LoginPage;
 
-test.beforeEach(async ({page}) => {
-    await page.goto('https://qademo.com/catalog');
-    heading = page.getByTestId(locators.catalog.heading);
-});
+test.describe("Login E2E Test", () => {
 
-test('Verify catalog page title', async () => {
-    await expect(heading).toHaveText('Product Catalog');
+    test("Navigate to login page and login successfully", async ({page}) => {
+        homePage = new HomePage(page);
+        loginPage = new LoginPage(page);
+
+        await homePage.openCatalog();
+        await homePage.clickLogin();
+
+        await loginPage.login('standard_user', 'standard123');
+
+        await loginPage.verifyLoginSuccess();
+    });
+
 });
